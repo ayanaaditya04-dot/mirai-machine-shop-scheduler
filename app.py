@@ -41,7 +41,6 @@ def _current_shift(now: datetime) -> str:
         return "AFTERNOON"
     return "NIGHT / OVERTIME"
 
-nn
 
 def _baseline(strategy: str):
     key = f"baseline_{strategy}"
