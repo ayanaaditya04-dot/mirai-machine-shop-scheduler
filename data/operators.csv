@@ -1,0 +1,23 @@
+operator_id,name,normal_shift,skill_level,hourly_rate_inr,overtime_willing
+OP_001,Murugan S,MORNING,MASTER,215,true
+OP_002,Karthik R,AFTERNOON,JUNIOR,85,false
+OP_003,Selvam P,MORNING,SENIOR,125,false
+OP_004,Ravichandran K,AFTERNOON,SENIOR,125,false
+OP_005,Manikandan T,MORNING,SENIOR,125,false
+OP_006,Prakash V,AFTERNOON,SENIOR,125,true
+OP_007,Suresh Kumar,MORNING,JUNIOR,85,false
+OP_008,Elumalai N,AFTERNOON,MASTER,215,true
+OP_009,Balamurugan G,MORNING,JUNIOR,85,false
+OP_010,Vijay Anand,AFTERNOON,JUNIOR,85,true
+OP_011,Senthil Kumar,MORNING,SENIOR,125,true
+OP_012,Raghavan M,AFTERNOON,MASTER,215,false
+OP_013,Dinesh Babu,MORNING,JUNIOR,85,false
+OP_014,Gopalakrishnan S,AFTERNOON,SENIOR,125,true
+OP_015,Anand R,MORNING,MASTER,215,false
+OP_016,Nagaraj B,AFTERNOON,MASTER,215,false
+OP_017,Chandrasekaran V,MORNING,MASTER,215,true
+OP_018,Mohan Das,AFTERNOON,SENIOR,125,true
+OP_019,Rajesh Kanna,MORNING,SENIOR,125,true
+OP_020,Kannan P,AFTERNOON,SENIOR,125,false
+OP_021,Venkatesh L,MORNING,JUNIOR,85,true
+OP_022,Siva Kumar,AFTERNOON,MASTER,215,true

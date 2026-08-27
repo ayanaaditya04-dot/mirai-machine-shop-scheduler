@@ -1,0 +1,27 @@
+{
+  "sunk_historical_cost": 52495.8,
+  "operations_moved": 3,
+  "moved_operation_ids": [
+    "OPR_019_06",
+    "OPR_010_04",
+    "OPR_019_05"
+  ],
+  "machine_changes": 0,
+  "operator_changes": 1,
+  "shift_changes": 2,
+  "delivery_changes": [
+    {
+      "order_id": "ORD_019",
+      "old_completion": "2026-09-06T08:49:16.500000",
+      "new_completion": "2026-09-13T00:49:16.500000"
+    }
+  ],
+  "additional_overtime_hours": 60.61,
+  "additional_overtime_cost": -1440.78,
+  "additional_penalty_cost": 50818.45,
+  "wasted_changeover_time_minutes": 0,
+  "wasted_changeover_cost": 0,
+  "incremental_disruption_cost": 49425.92,
+  "wasted_changeover": [],
+  "runtime_seconds": 0.022895416999745066
+}

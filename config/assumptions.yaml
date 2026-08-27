@@ -1,0 +1,88 @@
+# Assumptions Register — every business rule NOT directly stated in the assignment brief.
+# Classification key: SOURCE_FACT | ASSUMPTION | DERIVED_DECISION (see DOMAIN_MODEL.md).
+# This file exists so nothing invented gets presented as a fact from Mirai during defense.
+
+assumptions:
+  - id: A-1
+    text: "Orders can be split (lot-split) across machines of the same type, min batch size 10 or 25% of qty, whichever smaller."
+    classification: ASSUMPTION
+
+  - id: A-2
+    text: "Operations can span across shift boundaries (carry over)."
+    classification: ASSUMPTION
+
+  - id: A-3
+    text: "Max overtime: 4h/day, 12h/week (config), 50h/quarter (statutory ceiling, Factories Act 1948)."
+    classification: ASSUMPTION
+    note: "50h/quarter is SOURCE_FACT (statute); 4h/day and 12h/week are ASSUMPTION."
+
+  - id: A-4
+    text: "All 14 machines run both regular shifts; any machine can reach NIGHT overtime with a willing qualified operator."
+    classification: ASSUMPTION
+
+  - id: A-5
+    text: "Rework re-enters the routing from the failed step, same order ID."
+    classification: ASSUMPTION
+
+  - id: A-6
+    text: "Material delay blocks only the order's first routing step, not the whole order."
+    classification: ASSUMPTION
+
+  - id: A-7
+    text: "CMM is a shared bottleneck resource — all quality-critical steps route through it."
+    classification: ASSUMPTION
+
+  - id: A-8
+    text: "Weekends are included in the 14-day horizon, at 1.5x premium."
+    classification: ASSUMPTION
+
+  - id: A-9
+    text: "Minimum lot-split batch size: 10 pieces or 25% of order quantity, whichever is smaller."
+    classification: ASSUMPTION
+
+  - id: A-10
+    text: "The 6 AM view is an interactive web dashboard, not a static report."
+    classification: DERIVED_DECISION
+
+  - id: A-11
+    text: "Power cut generator-vs-lose-shift is flagged for supervisor/owner decision, not automatic."
+    classification: DERIVED_DECISION
+
+  - id: A-12
+    text: "Planned maintenance: 1 window per machine per 14-day horizon, 4-8 hours."
+    classification: ASSUMPTION
+
+  - id: A-13
+    text: "Electricity is 40% of a machine's blended hourly rate, for generator-cost calculation purposes."
+    classification: ASSUMPTION
+    note: "Needs confirmation — invented to operationalize the SOURCE_FACT 3x generator multiplier."
+
+  - id: A-14
+    text: "Overtime premium: 1.5x for first 4h, 2.0x beyond, per common MSME practice."
+    classification: ASSUMPTION
+    note: "Falls within the brief's stated 1.5-2x range (SOURCE_FACT range), exact split is ASSUMPTION."
+
+  - id: A-15
+    text: "Machine roster trimmed to lathes/VMCs/HMC/one grinder/drills/conv. mill/CMM; dropped EDM, horizontal boring, gear hobbing, broaching, honing."
+    classification: DERIVED_DECISION
+    note: "Not mentioned in brief; removed to protect scope/deadline (Phase-1 audit finding)."
+
+  - id: A-16
+    text: "Skill-level distribution across generated operators: 15% MASTER / 55% SENIOR / 30% JUNIOR."
+    classification: ASSUMPTION
+
+  - id: A-17
+    text: "60% of operators are overtime_willing."
+    classification: ASSUMPTION
+
+  - id: A-18
+    text: "Order due dates span 3-21 days out (beyond the pure 14-day horizon, since a real shop always has some orders due later)."
+    classification: ASSUMPTION
+
+  - id: A-19
+    text: "The pressure experiment fixes the roster at 22 operators and assigns 8 comfortable, 10 moderate, and 7 tight due-date bands."
+    classification: ASSUMPTION
+
+  - id: A-20
+    text: "All generated orders include a grinding step, with grinder batch cycle targets of 7.0-7.2 hours, keeping one operation within one shift while making the single grinder a meaningful bottleneck."
+    classification: ASSUMPTION

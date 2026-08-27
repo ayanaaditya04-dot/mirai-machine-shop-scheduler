@@ -1,0 +1,8 @@
+customer_id,name,tier,revenue_share,just_in_time,late_penalty_pct_per_day,relationship_years
+CUST_001,Vantage AutoDrive Pvt Ltd,TIER_1,0.6,true,2.0,9
+CUST_002,Kaveri Auto Components,TIER_2,0.12,false,1.0,6
+CUST_003,Nandi Engineering Works,TIER_2,0.09,false,1.0,4
+CUST_004,Sathya Precision Traders,TIER_2,0.07,false,1.0,3
+CUST_005,Coromandel Fasteners Ltd,TIER_3,0.05,false,0.5,2
+CUST_006,Elango Tooling Services,TIER_3,0.04,false,0.5,1
+CUST_007,Bharathi Spares & Co,TIER_3,0.03,false,0.5,1

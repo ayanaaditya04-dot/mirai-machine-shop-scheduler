@@ -1,0 +1,8 @@
+{
+  "machine_cost": 206170.61,
+  "operator_cost": 57391.32,
+  "overtime_cost": 12478.78,
+  "changeover_cost": 67916.67,
+  "penalty_cost": 31533.53,
+  "total_cost": 375490.9
+}

@@ -1,0 +1,25 @@
+# Phase 2 objective weights. These are derived scheduling assumptions, not Mirai facts.
+weights:
+  CHEAPEST:
+    machine_cost: 1.0
+    operator_cost: 0.25
+    changeover_cost: 1.0
+    overtime_cost: 2.0
+    lateness_cost: 1.0
+  MOST_ON_TIME:
+    due_date_urgency: 4.0
+    tier_priority: 3.0
+    lateness_cost: 5.0
+    overtime_cost: 0.5
+  MOST_ROBUST:
+    reliability_risk: 4.0
+    bottleneck_pressure: 5.0
+    operator_scarcity: 4.0
+    alternative_resource_scarcity: 5.0
+    slack: 2.0
+    changeover_cost: 0.5
+  # Robustness terms are derived assumptions: lower pressure/scarcity and higher
+  # slack/alternatives are preferred; no defense scenario is encoded here.
+initial_setup_minutes: 20
+allow_night_overtime: true
+allow_weekend_overtime: true

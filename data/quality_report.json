@@ -1,0 +1,146 @@
+{
+  "breakdowns": {
+    "count": 21,
+    "duration_hours": {
+      "max": 12.0,
+      "mean": 6.62,
+      "min": 2.0
+    }
+  },
+  "capacity_hours_per_machine": 210.0,
+  "changeover_distribution": {
+    "MAJOR": 28,
+    "MEDIUM": 2,
+    "MINOR": 6
+  },
+  "demand_capacity_ratio_by_machine": {
+    "CMM_01": 0.18,
+    "CNC_HMC_01": 0.0,
+    "CNC_LATHE_01": 0.095,
+    "CNC_LATHE_02": 0.095,
+    "CNC_VMC_01": 0.051,
+    "CNC_VMC_02": 0.051,
+    "CNC_VMC_03": 0.051,
+    "CONV_LATHE_01": 0.0,
+    "CONV_LATHE_02": 0.0,
+    "GRINDER_01": 0.845,
+    "MILLING_CONV_01": 0.0,
+    "MILLING_CONV_02": 0.0,
+    "RADIAL_DRILL_01": 0.072,
+    "RADIAL_DRILL_02": 0.072
+  },
+  "due_date_offsets_days": [
+    10.5,
+    11.5,
+    10.2,
+    14.0,
+    15.5,
+    16.0,
+    11.0,
+    4.5,
+    8.0,
+    8.0,
+    10.0,
+    10.5,
+    10.0,
+    9.0,
+    7.0,
+    6.0,
+    10.5,
+    6.5,
+    5.2,
+    4.5,
+    3.5,
+    5.5,
+    6.5,
+    4.5,
+    5.2
+  ],
+  "grinding": {
+    "capacity_hours": 210.0,
+    "ratio": 0.845,
+    "workload_hours": 177.52
+  },
+  "maintenance_hours": 85.0,
+  "operator_skill_coverage": {
+    "CMM_INSPECTION": 10,
+    "CNC_HMC": 9,
+    "CNC_LATHE": 11,
+    "CNC_VMC": 6,
+    "CONV_LATHE": 9,
+    "GRINDER": 3,
+    "MILLING_CONV": 7,
+    "RADIAL_DRILL": 11
+  },
+  "operator_workload_potential": {
+    "AFTERNOON": 11,
+    "MORNING": 11
+  },
+  "orders": {
+    "operations_per_order": {
+      "5": 20,
+      "6": 5
+    },
+    "operations_total": 136,
+    "quantity_max": 2978,
+    "quantity_mean": 1670.6,
+    "quantity_min": 401,
+    "total": 25
+  },
+  "quality": {
+    "failure_rate_range_assumption": "2-5% of pieces at inspection; rework is a separate event",
+    "orders_with_rework": 6,
+    "rework_events": 6,
+    "rework_piece_total": 265
+  },
+  "signals": {
+    "likely_infeasible": false,
+    "notes": "Capacity is a regular two-shift upper bound before setup, maintenance, breakdowns, or precedence effects.",
+    "potential_bottlenecks": [
+      "GRINDER"
+    ],
+    "underused_families": [
+      "CNC_LATHE_01",
+      "CNC_LATHE_02",
+      "CNC_VMC_01",
+      "CNC_VMC_02",
+      "CNC_VMC_03",
+      "CNC_HMC_01",
+      "CONV_LATHE_01",
+      "CONV_LATHE_02",
+      "RADIAL_DRILL_01",
+      "RADIAL_DRILL_02",
+      "MILLING_CONV_01",
+      "MILLING_CONV_02"
+    ]
+  },
+  "workload_hours_by_machine": {
+    "CMM_01": 37.89,
+    "CNC_HMC_01": 0.0,
+    "CNC_LATHE_01": 19.9,
+    "CNC_LATHE_02": 19.9,
+    "CNC_VMC_01": 10.61,
+    "CNC_VMC_02": 10.61,
+    "CNC_VMC_03": 10.61,
+    "CONV_LATHE_01": 0.0,
+    "CONV_LATHE_02": 0.0,
+    "GRINDER_01": 177.52,
+    "MILLING_CONV_01": 0.0,
+    "MILLING_CONV_02": 0.0,
+    "RADIAL_DRILL_01": 15.05,
+    "RADIAL_DRILL_02": 15.05
+  },
+  "workload_hours_by_operation": {
+    "BORING": 8.8,
+    "CYLINDRICAL_GRINDING": 70.97,
+    "DRILLING": 24.6,
+    "FACING": 9.21,
+    "INSPECTION": 37.89,
+    "MILLING": 26.78,
+    "REAMING": 5.5,
+    "SURFACE_GRINDING": 106.54,
+    "TAPPING": 5.04,
+    "THREADING": 4.33,
+    "TURNING": 17.46
+  }
+}

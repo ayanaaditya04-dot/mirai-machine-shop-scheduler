@@ -1,0 +1,41 @@
+{
+  "sunk_historical_cost": 52495.8,
+  "operations_moved": 12,
+  "moved_operation_ids": [
+    "OPR_012_02",
+    "OPR_012_03",
+    "OPR_019_06",
+    "OPR_024_03",
+    "OPR_019_03",
+    "OPR_019_05",
+    "OPR_024_04",
+    "OPR_024_02",
+    "OPR_019_04",
+    "OPR_024_06",
+    "OPR_024_05",
+    "OPR_019_02"
+  ],
+  "machine_changes": 2,
+  "operator_changes": 8,
+  "shift_changes": 7,
+  "delivery_changes": [
+    {
+      "order_id": "ORD_019",
+      "old_completion": "2026-09-06T08:49:16.500000",
+      "new_completion": "2026-09-07T10:23:11.940000"
+    },
+    {
+      "order_id": "ORD_024",
+      "old_completion": "2026-09-07T08:23:24.480000",
+      "new_completion": "2026-09-12T22:49:29.040000"
+    }
+  ],
+  "additional_overtime_hours": 58.65,
+  "additional_overtime_cost": -1517.56,
+  "additional_penalty_cost": 18543.14,
+  "wasted_changeover_time_minutes": 0,
+  "wasted_changeover_cost": 0,
+  "incremental_disruption_cost": 17850.42,
+  "wasted_changeover": [],
+  "runtime_seconds": 0.10631237500092539
+}

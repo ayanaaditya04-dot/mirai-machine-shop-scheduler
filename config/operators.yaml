@@ -1,0 +1,26 @@
+# Operator generation parameters — Sridhar Precision Works
+#
+# Operators are generated (not hand-listed) because the brief only gives us shape constraints,
+# not a literal roster. This file is the single source of truth for those generation rules.
+
+operator_count_range: [22, 22]   # ASSUMPTION: fixed roster for comparable pressure runs
+
+skill_level_distribution:
+  # ASSUMPTION — a plausible tier-2 shop skill pyramid
+  MASTER: 0.15
+  SENIOR: 0.55
+  JUNIOR: 0.30
+
+overtime_willing_pct: 0.60        # ASSUMPTION — fraction of operators willing to do overtime/night
+
+# SOURCE FACT (assignment brief): "only 3 people can run the grinding machine."
+# This is a HARD generation constraint, not a sampling outcome.
+grinder_qualified_operator_count: 3
+
+# Every operator qualifies for at least one machine type; most qualify for 2-4 to keep the
+# shop schedulable (PROJECT_PLAN data-validation requirement: at least one qualified operator
+# per machine type per regular shift).
+qualifications_per_operator_range: [1, 4]
+
+# Master operators skew toward higher-value/bottleneck machines (CNC_HMC, GRINDER, CNC_LATHE_02)
+master_preferred_machine_types: [CNC_HMC, GRINDER, CNC_LATHE_02]

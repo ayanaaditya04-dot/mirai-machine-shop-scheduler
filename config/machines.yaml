@@ -1,0 +1,133 @@
+# Machine roster — Sridhar Precision Works
+#
+# SOURCE FACT (assignment brief): "14 machines (CNC lathes, milling machines, drills, and
+# one grinding machine that every job seems to need)."
+#
+# The 14 machines below are trimmed to exactly those families. GRINDER_01 is deliberately
+# singular — it is the shop-wide bottleneck the brief calls out by name.
+#
+# hourly_rate_inr values are DERIVED DECISIONS (see ECONOMICS.md) — plausible for a
+# tier-2 Indian auto-components shop in 2026, not sourced from the brief.
+#
+# mtbf_hours / mttr_hours are ASSUMPTIONS used to generate a plausible breakdown history
+# (deterministic, seed=42) and to score the "Robust" strategy. GRINDER_01 is given a lower
+# MTBF than comparable machines to reflect it being the shop's single point of failure —
+# every job needs it, so its condition matters more.
+
+machines:
+  - machine_id: CNC_LATHE_01
+    name: "CNC Lathe #1 (Small, 2-axis)"
+    machine_type: CNC_LATHE
+    hourly_rate_inr: 550
+    capabilities: [TURNING, FACING, THREADING]
+    mtbf_hours: 720
+    mttr_hours: 6
+
+  - machine_id: CNC_LATHE_02
+    name: "CNC Turn-Mill Center (Live Tooling)"
+    machine_type: CNC_LATHE
+    hourly_rate_inr: 1100
+    capabilities: [TURNING, FACING, THREADING, BORING, MILLING, DRILLING]
+    mtbf_hours: 650
+    mttr_hours: 8
+
+  - machine_id: CNC_VMC_01
+    name: "3-Axis CNC VMC #1"
+    machine_type: CNC_VMC
+    hourly_rate_inr: 800
+    capabilities: [MILLING, DRILLING, TAPPING, REAMING]
+    mtbf_hours: 700
+    mttr_hours: 5
+
+  - machine_id: CNC_VMC_02
+    name: "3-Axis CNC VMC #2"
+    machine_type: CNC_VMC
+    hourly_rate_inr: 800
+    capabilities: [MILLING, DRILLING, TAPPING, REAMING]
+    mtbf_hours: 700
+    mttr_hours: 5
+
+  - machine_id: CNC_VMC_03
+    name: "3-Axis CNC VMC #3"
+    machine_type: CNC_VMC
+    hourly_rate_inr: 800
+    capabilities: [MILLING, DRILLING, TAPPING, REAMING]
+    mtbf_hours: 700
+    mttr_hours: 5
+
+  - machine_id: CNC_HMC_01
+    name: "Twin-Pallet CNC HMC"
+    machine_type: CNC_HMC
+    hourly_rate_inr: 1800
+    capabilities: [MILLING, BORING, DRILLING, TAPPING]
+    mtbf_hours: 600
+    mttr_hours: 10
+
+  - machine_id: GRINDER_01
+    name: "The Grinder (surface + cylindrical)"
+    machine_type: GRINDER
+    hourly_rate_inr: 750
+    capabilities: [SURFACE_GRINDING, CYLINDRICAL_GRINDING]
+    mtbf_hours: 480   # deliberately lower — shop-wide bottleneck, SOURCE FACT
+    mttr_hours: 12
+
+  - machine_id: CONV_LATHE_01
+    name: "Heavy-Duty Conventional Lathe #1"
+    machine_type: CONV_LATHE
+    hourly_rate_inr: 300
+    capabilities: [TURNING, FACING]
+    mtbf_hours: 900
+    mttr_hours: 4
+
+  - machine_id: CONV_LATHE_02
+    name: "Heavy-Duty Conventional Lathe #2"
+    machine_type: CONV_LATHE
+    hourly_rate_inr: 300
+    capabilities: [TURNING, FACING]
+    mtbf_hours: 900
+    mttr_hours: 4
+
+  - machine_id: RADIAL_DRILL_01
+    name: "Heavy Radial Drilling Machine #1"
+    machine_type: RADIAL_DRILL
+    hourly_rate_inr: 250
+    capabilities: [DRILLING, TAPPING, REAMING]
+    mtbf_hours: 950
+    mttr_hours: 3
+
+  - machine_id: RADIAL_DRILL_02
+    name: "Heavy Radial Drilling Machine #2"
+    machine_type: RADIAL_DRILL
+    hourly_rate_inr: 250
+    capabilities: [DRILLING, TAPPING, REAMING]
+    mtbf_hours: 950
+    mttr_hours: 3
+
+  - machine_id: MILLING_CONV_01
+    name: "Universal Turret Milling Machine #1"
+    machine_type: MILLING_CONV
+    hourly_rate_inr: 280
+    capabilities: [MILLING]
+    mtbf_hours: 850
+    mttr_hours: 4
+
+  - machine_id: MILLING_CONV_02
+    name: "Universal Turret Milling Machine #2"
+    machine_type: MILLING_CONV
+    hourly_rate_inr: 280
+    capabilities: [MILLING]
+    mtbf_hours: 850
+    mttr_hours: 4
+
+  - machine_id: CMM_01
+    name: "Coordinate Measuring Machine"
+    machine_type: CMM_INSPECTION
+    hourly_rate_inr: 400
+    capabilities: [INSPECTION]
+    mtbf_hours: 1200
+    mttr_hours: 3
+
+# Planned maintenance windows: 1 per machine per 14-day horizon, 4-8 hours (DOMAIN_MODEL A-12)
+planned_maintenance:
+  windows_per_machine: 1
+  duration_hours_range: [4, 8]

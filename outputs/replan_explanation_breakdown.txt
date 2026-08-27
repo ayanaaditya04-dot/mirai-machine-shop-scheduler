@@ -1,0 +1,17 @@
+DISRUPTION
+2026-09-05 22:15: GRINDER_01 unavailable for 8 hours
+
+IMPACT
+4 operations replanned
+
+CHANGES
+OPR_010_04: GRINDER_01 -> GRINDER_01 (2026-09-06T06:23:00 -> 2026-09-06T06:38:00)
+OPR_010_05: CMM_01 -> CMM_01 (2026-09-06T14:18:00 -> 2026-09-06T14:18:00)
+OPR_019_05: GRINDER_01 -> GRINDER_01 (2026-09-05T22:20:00 -> 2026-09-12T14:23:00)
+OPR_019_06: CMM_01 -> CMM_01 (2026-09-06T06:18:00 -> 2026-09-12T22:18:00)
+
+COST
+Incremental disruption cost: ₹424639.29
+
+RECOMMENDATION
+Protect Tier-1 work first; authorize overtime only when its configured premium is below delivery exposure.

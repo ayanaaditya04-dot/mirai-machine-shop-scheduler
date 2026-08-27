@@ -1,0 +1,30 @@
+# Shift definitions — Sridhar Precision Works
+#
+# SOURCE FACT (assignment brief): "2 shifts a day." NIGHT is an overtime-only escape valve,
+# not baseline roster capacity (see DOMAIN_MODEL.md §ShiftType for the correction history).
+
+shifts:
+  - shift_type: MORNING
+    start_time: "06:00"
+    end_time: "14:00"
+    available_hours: 7.5
+    is_regular_capacity: true
+    premium_multiplier: 1.0
+
+  - shift_type: AFTERNOON
+    start_time: "14:00"
+    end_time: "22:00"
+    available_hours: 7.5
+    is_regular_capacity: true
+    premium_multiplier: 1.0
+
+  - shift_type: NIGHT
+    start_time: "22:00"
+    end_time: "06:00"
+    available_hours: 7.0
+    is_regular_capacity: false   # overtime-only, see A-4
+    # premium follows the overtime schedule in economics.yaml, not a flat multiplier
+
+planning_horizon_days: 14
+weekend_included: true          # A-8
+weekend_premium_multiplier: 1.5 # A-8, ASSUMPTION

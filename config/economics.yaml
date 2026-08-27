@@ -1,0 +1,76 @@
+# Economics / cost model config — all rates configurable, no magic numbers in code.
+# See ECONOMICS.md for derivations and the calculation examples each of these feeds.
+
+overtime:
+  # ASSUMPTION (within the brief's stated "1.5-2x labour" range): first 4h at 1.5x,
+  # remainder at 2.0x, per common MSME practice.
+  multiplier_first_4h: 1.5
+  multiplier_beyond_4h: 2.0
+  max_overtime_hours_per_day: 4      # A-3
+  max_overtime_hours_per_week: 12    # A-3
+  max_overtime_hours_per_quarter: 50 # Factories Act, 1948 — statutory ceiling
+
+night_shift:
+  # NIGHT is overtime-only (see shifts.yaml) — uses the same overtime multiplier schedule
+  # as daytime overtime, not a separate flat premium.
+  flat_premium_inr_per_shift: 100    # ASSUMPTION, industry practice, applied as floor
+
+weekend:
+  premium_multiplier: 1.5            # A-8
+
+power_cut:
+  # SOURCE FACT: "run the diesel generator at 3x electricity cost, or lose the shift?"
+  electricity_share_of_machine_rate: 0.40   # ASSUMPTION — needs confirmation
+  generator_cost_multiplier: 3.0            # SOURCE FACT
+  # effective generator rate = machine_rate * (0.6 + 0.4*3.0) = machine_rate * 1.8
+
+changeover_categories:
+  MINOR:
+    time_range_min: [15, 30]
+    test_piece_cost_inr: 0
+  MEDIUM:
+    time_range_min: [35, 60]
+    test_piece_cost_inr: 150
+  MAJOR:
+    time_range_min: [75, 150]
+    test_piece_cost_inr: 300
+
+late_penalty:
+  TIER_1:
+    daily_rate_pct: 2.0
+    cap_pct: 10.0
+  TIER_2:
+    daily_rate_pct: 1.0
+    cap_pct: 8.0
+  TIER_3:
+    daily_rate_pct: 0.5
+    cap_pct: 5.0
+
+order_value:
+  # profit margin multiplier by tier — TIER_3 highest, consistent with brief's
+  # "smaller customers pay better margins but tolerate delays"
+  profit_margin_pct:
+    TIER_1: 15
+    TIER_2: 25
+    TIER_3: 45
+
+operator_wages:
+  MASTER:
+    monthly_salary_inr: 45000
+    hourly_rate_inr: 215
+  SENIOR:
+    monthly_salary_inr: 26000
+    hourly_rate_inr: 125
+  JUNIOR:
+    monthly_salary_inr: 18000
+    hourly_rate_inr: 85
+
+# Phase 6 recommendation weights. ASSUMPTION: equal emphasis on cost and delivery,
+# with smaller weights for operating friction and resilience slack.
+recommendation_weights:
+  total_cost: 0.35
+  late_orders: 0.25
+  tardiness: 0.15
+  overtime: 0.05
+  changeover: 0.05
+  slack_resilience: 0.15

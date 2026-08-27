@@ -1,0 +1,45 @@
+# Pre-built disruption scenarios for demo/defense (Mission 5 / Mission 7).
+# Stubbed now at Mission 2 so the config/ directory is complete; scenario logic is
+# implemented in src/replanner/ (Mission 5) and src/defense/ (Mission 7).
+#
+# The defense-session example in the assignment brief is echoed as scenario_live_example:
+# "Tuesday 11 AM - the grinding machine is down for 8+ hours, your tier-1 customer's JIT
+# delivery is Thursday 6 AM, and one of your three grinder operators is absent."
+
+scenarios:
+  - id: SCN_01_GRINDER_BREAKDOWN
+    type: MACHINE_BREAKDOWN
+    affected_entity: GRINDER_01
+    duration_hours: 8
+    description: "The one grinder breaks down for a full shift-plus."
+
+  - id: SCN_02_OPERATOR_ABSENCE
+    type: OPERATOR_ABSENCE
+    affected_entity: "<one of the 3 grinder-qualified operators, resolved at runtime>"
+    duration_hours: 8
+    description: "A grinder-qualified operator is out sick — scarcity bites."
+
+  - id: SCN_03_MATERIAL_DELAY
+    type: MATERIAL_DELAY
+    affected_entity: "<order resolved at runtime>"
+    duration_hours: 24
+    description: "Raw material for a TIER_1 order arrives a day late."
+
+  - id: SCN_04_REWORK
+    type: REWORK_REQUIRED
+    affected_entity: "<order/step resolved at runtime>"
+    duration_hours: 0
+    description: "A batch fails inspection and re-enters the queue at its failed step (A-5)."
+
+  - id: SCN_05_POWER_CUT
+    type: POWER_CUT
+    affected_entity: SHOP
+    duration_hours: 4
+    description: "Grid power cut shop-wide — run the generator at 1.8x effective machine rate, or lose the window."
+
+  - id: SCN_06_CASCADE_DEFENSE_EXAMPLE
+    type: CASCADE
+    description: >
+      Live defense scenario from the assignment brief: Tuesday 11 AM, GRINDER_01 down 8+
+      hours, a TIER_1 JIT delivery due Thursday 6 AM, and one of the 3 grinder operators
+      absent simultaneously. Composed of SCN_01 + SCN_02 with a JIT order as backdrop.

@@ -1,0 +1,66 @@
+# Customer + order book generation parameters — Sridhar Precision Works
+#
+# SOURCE FACT (assignment brief): "One tier-1 customer is 60% of revenue, runs
+# just-in-time, and penalises late delivery." "Smaller customers pay better margins
+# but tolerate delays." "~25 open orders at any time." "200-5,000 pieces flowing
+# through 3-6 operations."
+
+customer_count: 7
+
+customers:
+  # revenue_share values must sum to 1.0 — used to weight order-value allocation
+  - name: "Vantage AutoDrive Pvt Ltd"
+    tier: TIER_1
+    revenue_share: 0.60
+    just_in_time: true
+    relationship_years: 9
+  - name: "Kaveri Auto Components"
+    tier: TIER_2
+    revenue_share: 0.12
+    just_in_time: false
+    relationship_years: 6
+  - name: "Nandi Engineering Works"
+    tier: TIER_2
+    revenue_share: 0.09
+    just_in_time: false
+    relationship_years: 4
+  - name: "Sathya Precision Traders"
+    tier: TIER_2
+    revenue_share: 0.07
+    just_in_time: false
+    relationship_years: 3
+  - name: "Coromandel Fasteners Ltd"
+    tier: TIER_3
+    revenue_share: 0.05
+    just_in_time: false
+    relationship_years: 2
+  - name: "Elango Tooling Services"
+    tier: TIER_3
+    revenue_share: 0.04
+    just_in_time: false
+    relationship_years: 1
+  - name: "Bharathi Spares & Co"
+    tier: TIER_3
+    revenue_share: 0.03
+    just_in_time: false
+    relationship_years: 1
+
+order_count: 25
+quantity_range: [300, 3000]        # SOURCE FACT range narrowed for this pressure experiment
+routing_steps_range: [3, 6]        # SOURCE FACT
+quality_fail_rate_range: [0.02, 0.05]  # SOURCE FACT ("2-5% of pieces fail inspection")
+
+due_date_horizon_days_range: [3, 21]  # retained for backwards-compatible configuration
+                                        # since a real shop always has some orders due beyond
+                                        # the current planning window (ASSUMPTION)
+
+due_date_bands_days:
+  # ASSUMPTION: 8 comfortable, 10 moderate, and 7 tight orders.
+  comfortable: [10, 16]
+  moderate: [6, 10]
+  tight: [3, 6]
+due_date_band_order_counts:
+  comfortable: 8
+  moderate: 10
+  tight: 7
+grinding_duration_range_hours: [7.0, 7.2]  # ASSUMPTION: per-batch grinder cycle target

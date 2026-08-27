@@ -1,0 +1,4 @@
+Strategy,Total Cost (INR),Machine Cost (INR),Operator Cost (INR),Overtime Cost (INR),Changeover Cost (INR),Penalty Cost (INR),OT Hours,Late Orders,Total Tardiness (days),Maximum Lateness (days),On-Time Orders,Average Slack (days),Minimum Slack (days),Average Machine Utilization (%),Maximum Machine Utilization (%),Grinder Utilization (%),Grinder-Operator Utilization (%),Bottleneck Utilization (%),Unscheduled Operations,Completion Rate (%)
+CHEAPEST,392549.43,206920.35,49535.6,14633.95,41791.17,79668.36,84.806,7,28.709,6.87,18,2.982,-6.87,12.48,89.07,89.07,29.69,89.07,0,100.0
+MOST_ON_TIME,375490.9,206170.61,57391.32,12478.78,67916.67,31533.53,66.766,4,11.742,5.673,21,1.418,-5.673,13.3,89.07,89.07,29.69,89.07,0,100.0
+MOST_ROBUST,389834.89,205505.0,50115.07,15650.09,38561.08,80003.64,101.692,8,26.7,5.792,17,2.982,-5.792,12.4,89.07,89.07,29.69,89.07,0,100.0

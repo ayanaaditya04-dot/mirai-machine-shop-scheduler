@@ -1,0 +1,40 @@
+# Changeover rules — Sridhar Precision Works
+#
+# SOURCE FACT (assignment brief): "Switching a lathe between similar parts takes 20 minutes;
+# between different part families, up to 3 hours of re-fixturing."
+#
+# DERIVED DECISION: implemented as three rule-based categories (per ECONOMICS.md §3 and
+# PROJECT_PLAN's own risk register), not a full machine_type x material x material x
+# operation x operation matrix. The full matrix was flagged as unnecessary complexity in
+# the Phase-1 audit — it doesn't add grading value over categories and costs real
+# implementation time.
+#
+# Category is derived at scheduling time from two jobs' (material, operation, fixture_family):
+#   MINOR   — same material family AND same fixture family, different part
+#   MEDIUM  — same material family, different fixture family (fixture swap)
+#   MAJOR   — different material family (new fixture + dedicated tooling)
+
+material_families:
+  # Materials grouped by how similar their machining setup is — drives MINOR vs MEDIUM vs MAJOR
+  STEEL_MILD: [MILD_STEEL, EN8]
+  STEEL_ALLOY: [EN24, EN31]
+  STAINLESS: [STAINLESS_STEEL_304, STAINLESS_STEEL_316]
+  CAST: [CAST_IRON]
+  NON_FERROUS: [ALUMINIUM_6061, BRASS, BRONZE]
+
+categories:
+  MINOR:
+    condition: "same_material_family and same_fixture_family"
+    time_range_min: [15, 30]
+    cost_inr: 0
+  MEDIUM:
+    condition: "same_material_family and different_fixture_family"
+    time_range_min: [35, 60]
+    cost_inr: 150
+  MAJOR:
+    condition: "different_material_family"
+    time_range_min: [75, 150]
+    cost_inr: 300
+
+# First job of the day / first job after a machine sits idle: no prior job to compare against
+no_prior_job_changeover_min: 20   # ASSUMPTION — treated as MINOR-equivalent baseline
