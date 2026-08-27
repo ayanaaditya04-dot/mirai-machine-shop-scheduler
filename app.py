@@ -53,10 +53,17 @@ def _active_schedule():
     return st.session_state.get("replanned_schedule", _baseline(st.session_state.strategy))
 
 
+def _slack_days(row) -> float:
+    completion = row.get("promised_completion_date")
+    if not completion:
+        return float("inf")
+    return (pd.Timestamp(row["due_date"]) - pd.Timestamp(completion)).total_seconds() / 86400
+
+
 def _status(row) -> str:
     if row.get("late", False):
         return "CRITICAL"
-    if float(row.get("late_days", 0)) > -1:
+    if _slack_days(row) < 1:
         return "AT RISK"
     return "ON TRACK"
 
@@ -70,7 +77,8 @@ def _render_briefing(labels, schedule):
     now = st.session_state.current_time
     st.caption(f"{now:%A, %d %b %Y %H:%M}  |  Current shift: {_current_shift(now)}")
     orders = pd.DataFrame(schedule.order_summary)
-    critical = orders[orders["late"] | (orders["late_days"] > -1)]
+    orders["slack_days"] = orders.apply(_slack_days, axis=1)
+    critical = orders[orders["late"] | (orders["slack_days"] < 1)]
     tier1 = orders[orders["tier"] == "TIER_1"]
     cols = st.columns(4)
     cols[0].metric("Current Shift", _current_shift(now))
@@ -123,7 +131,7 @@ def _render_orders(schedule):
     summary = pd.DataFrame(schedule.order_summary)
     frame = orders.merge(customers, on="customer_id").merge(summary[["order_id", "promised_completion_date", "late_days", "late"]], on="order_id")
     frame["status"] = frame.apply(_status, axis=1)
-    frame["risk"] = frame.apply(lambda row: "CRITICAL" if row["late"] else ("AT RISK" if row["late_days"] < 1 else "ON TRACK"), axis=1)
+    frame["risk"] = frame["status"]
     tiers = st.multiselect("Customer tier", sorted(frame["tier"].unique()))
     if tiers: frame = frame[frame.tier.isin(tiers)]
     frame = frame.sort_values(["risk", "due_date"])
