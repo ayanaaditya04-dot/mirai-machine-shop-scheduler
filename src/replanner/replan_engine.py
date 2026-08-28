@@ -18,7 +18,7 @@ from src.data_generator import PLANNING_START
 from src.models import Disruption, DisruptionType, Schedule, ScheduleSlot
 from src.scheduler.engine import (
     HORIZON_END, JobOperation, _candidate, _matrix, _score, _shift_windows,
-    enrich_robust_components,
+    _operator_eligible_for_shift, enrich_robust_components,
     build_jobs,
 )
 
@@ -100,6 +100,13 @@ def apply_rework(schedule: Schedule, order_id: str, rework_quantity: int, curren
     return reschedule(schedule, when, [disruption], data_dir, rework_quantity)
 
 
+def apply_power_cut(schedule: Schedule, start_time: datetime, duration: float, generator_available: bool = True, current_time: datetime | None = None, data_dir: str | Path = "data") -> ReplanResult:
+    disruption = Disruption("POWER_CUT", DisruptionType.POWER_CUT, start_time, "SHOP", duration,
+                            "Grid power cut shop-wide", generator_available=generator_available)
+    when = current_time or start_time
+    return reschedule(schedule, when, [disruption], data_dir)
+
+
 def _overlap(left_start, left_end, right_start, right_end):
     return left_start < right_end and left_end > right_start
 
@@ -125,6 +132,8 @@ def reschedule(schedule: Schedule, current_time: datetime, disruptions: list[Dis
     operation_order = {slot.operation_id: slot.order_id for slot in old_slots}
     machine_rows = _rows(directory, "machines")
     operator_rows = _rows(directory, "operators")
+    power_cut_cost = 0.0
+    power_cut_options = []
     for disruption in disruptions:
         start = disruption.timestamp
         end = start + timedelta(hours=disruption.duration_hours)
@@ -139,6 +148,24 @@ def reschedule(schedule: Schedule, current_time: datetime, disruptions: list[Dis
             affected |= {slot.operation_id for slot in future if slot.order_id == disruption.affected_entity_id}
         elif disruption.type == DisruptionType.REWORK_REQUIRED:
             affected |= {slot.operation_id for slot in future if slot.order_id == disruption.affected_entity_id}
+        elif disruption.type == DisruptionType.POWER_CUT:
+            end = start + timedelta(hours=disruption.duration_hours)
+            economics = load_economics_config()["power_cut"]
+            generator_cost = sum(
+                (min(slot.end_time, end) - max(slot.start_time, start)).total_seconds() / 3600
+                * float(next(machine["hourly_rate_inr"] for machine in machine_rows if machine["machine_id"] == slot.machine_id))
+                * float(economics["electricity_share_of_machine_rate"])
+                * (float(economics["generator_cost_multiplier"]) - 1)
+                for slot in future if _overlap(slot.start_time, slot.end_time, start, end)
+            )
+            lost_shift_operations = [slot.operation_id for slot in future if _overlap(slot.start_time - timedelta(minutes=slot.setup_time_minutes), slot.end_time, start, end)]
+            power_cut_options.append({"generator_cost": round(generator_cost, 2), "lost_shift_operations": lost_shift_operations})
+            if disruption.generator_available is False:
+                for machine in machine_rows:
+                    state.machine_breakdowns.setdefault(machine["machine_id"], []).append((start, end))
+                affected |= set(lost_shift_operations)
+            else:
+                power_cut_cost += generator_cost
     affected_orders = {operation_order[operation_id] for operation_id in affected}
     # A moved operation changes the feasible completion time of all later steps.
     for slot in future:
@@ -208,6 +235,8 @@ def reschedule(schedule: Schedule, current_time: datetime, disruptions: list[Dis
                 for operator in operator_rows:
                     if not any(row["operator_id"] == operator["operator_id"] and row["machine_type"] == machine["machine_type"] for row in _rows(directory, "operator_skills")):
                         continue
+                    if not any(_operator_eligible_for_shift(operator, shift) for shift in shifts):
+                        continue
                     candidate = _candidate(job, operation, machine, operator, shifts, machine_busy, operator_busy, last_family, matrix, maintenance, breakdowns, max(predecessor, current_time), config, schedule.strategy, {})
                     if candidate:
                         enrich_robust_components(candidate, machine_rows, operator_rows, {(row["operator_id"], row["machine_type"]) for row in _rows(directory, "operator_skills")}, machine_busy)
@@ -245,14 +274,19 @@ def reschedule(schedule: Schedule, current_time: datetime, disruptions: list[Dis
     result_schedule.unscheduled_operations = [op.operation_id for job, op in pending]
     result_schedule.order_summary = _rebuild_order_summary(result_schedule, directory)
     result_schedule.cost_summary = _cost_from_slots(result_schedule.slots, result_schedule.order_summary)
-    explanation = _explain(disruptions, changes, result_schedule)
+    result_schedule.cost_summary["power_cut_cost"] = round(power_cut_cost, 2)
+    result_schedule.cost_summary["total_cost"] = round(result_schedule.cost_summary["total_cost"] + power_cut_cost, 2)
+    explanation = _explain(disruptions, changes, result_schedule, power_cut_options)
     return ReplanResult(result_schedule, state, disruptions, sorted(affected), changes, explanation, compare_schedules(schedule, result_schedule, current_time))
 
 
-def _explain(disruptions, changes, schedule):
+def _explain(disruptions, changes, schedule, power_cut_options=None):
     lines = ["DISRUPTION", *[f"{d.timestamp:%Y-%m-%d %H:%M}: {d.description}" for d in disruptions], "", "IMPACT", f"{len(changes)} operations replanned", "", "CHANGES"]
     lines.extend(f"{c['operation_id']}: {c['old_machine_id'] or 'new'} -> {c['new_machine_id']} ({c['old_start_time'] or 'new'} -> {c['new_start_time']})" for c in changes)
     lines += ["", "COST", f"Incremental disruption cost: ₹{schedule.cost_summary['total_cost']:.2f}", "", "RECOMMENDATION", "Protect Tier-1 work first; authorize overtime only when its configured premium is below delivery exposure."]
+    if power_cut_options:
+        option = power_cut_options[0]
+        lines += ["", "POWER CUT DECISION", f"Generator incremental cost: ₹{option['generator_cost']:.2f}", f"Lose-shift affected operations: {len(option['lost_shift_operations'])}", "Supervisor/owner must confirm the preferred option."]
     return "\n".join(lines)
 
 

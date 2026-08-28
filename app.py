@@ -14,7 +14,7 @@ import streamlit as st
 
 from src.models import Disruption, DisruptionType
 from src.final_memo import generate_memo
-from src.replanner import apply_power_cut, reschedule
+from src.replanner import reschedule
 from src.scheduler.engine import STRATEGIES, export_schedule, generate_schedule, schedule_dataframe
 from src.validation.schedule_validator import validate_schedule
 
