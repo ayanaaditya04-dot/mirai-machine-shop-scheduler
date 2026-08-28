@@ -103,6 +103,10 @@ def _next_free(intervals: list[tuple[datetime, datetime]], start: datetime, dura
     return current
 
 
+def _operator_eligible_for_shift(operator: dict, shift: dict) -> bool:
+    return not shift["regular"] or operator["normal_shift"] == shift["shift_type"]
+
+
 def _matrix(data_dir: Path) -> dict[tuple[str, str], tuple[str, float, float]]:
     result = {}
     for row in _read(data_dir, "changeovers"):
@@ -137,6 +141,8 @@ def _candidate(job: Job, operation: JobOperation, machine: dict, operator: dict,
     earliest = max(previous_completion, job.material_available, PLANNING_START)
     best = None
     for shift in shifts:
+        if not _operator_eligible_for_shift(operator, shift):
+            continue
         if not shift["regular"] and operator["overtime_willing"] != "true":
             continue
         cursor = max(shift["start"], earliest)
@@ -172,9 +178,13 @@ def _candidate(job: Job, operation: JobOperation, machine: dict, operator: dict,
             machine_rate, operator_rate = float(machine["hourly_rate_inr"]), float(operator["hourly_rate_inr"])
             hours = duration.total_seconds() / 3600
             changeover_cost = setup_minutes / 60 * (machine_rate + operator_rate) + test_cost
+            overtime_cost = 0.0
+            if not shift["regular"]:
+                multiplier = float(config["overtime"]["multiplier_first_4h"] if hours <= 4 else config["overtime"]["multiplier_beyond_4h"])
+                overtime_cost = hours * operator_rate * (multiplier - 1)
             lateness_hours = max(0.0, (end - job.due_date).total_seconds() / 3600)
             risk = 1 / max(float(machine["mtbf_hours"]), 1.0)
-            components = {"machine_cost": hours * machine_rate, "operator_cost": hours * operator_rate, "changeover_cost": changeover_cost,
+            components = {"machine_cost": hours * machine_rate, "operator_cost": hours * operator_rate, "overtime_cost": overtime_cost, "changeover_cost": changeover_cost,
                           "lateness_cost": lateness_hours * job.order_value * (0.02 if job.tier == "TIER_1" else 0.01 if job.tier == "TIER_2" else 0.005) / 24,
                           "due_date_urgency": max(0.0, (job.due_date - end).total_seconds() / 3600), "tier_priority": {"TIER_1": 3.0, "TIER_2": 2.0, "TIER_3": 1.0}[job.tier],
                           "reliability_risk": risk * hours, "utilization_pressure": len(machine_busy[machine_id]), "slack": max(0.0, (job.due_date - end).total_seconds() / 3600)}
@@ -185,7 +195,7 @@ def _candidate(job: Job, operation: JobOperation, machine: dict, operator: dict,
 def _score(candidate: Candidate, strategy: str, weights: dict) -> float:
     terms = weights[strategy]
     if strategy == "CHEAPEST":
-        return sum(terms[key] * candidate.components[key] for key in ("machine_cost", "operator_cost", "changeover_cost", "lateness_cost"))
+        return sum(terms[key] * candidate.components[key] for key in ("machine_cost", "operator_cost", "overtime_cost", "changeover_cost", "lateness_cost"))
     if strategy == "MOST_ON_TIME":
         return terms["due_date_urgency"] * candidate.components["due_date_urgency"] - terms["tier_priority"] * candidate.components["tier_priority"] + terms["lateness_cost"] * candidate.components["lateness_cost"]
     return (terms["reliability_risk"] * candidate.components["reliability_risk"]
