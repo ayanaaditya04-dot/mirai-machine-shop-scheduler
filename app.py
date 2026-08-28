@@ -14,7 +14,7 @@ import streamlit as st
 
 from src.models import Disruption, DisruptionType
 from src.final_memo import generate_memo
-from src.replanner import reschedule
+from src.replanner import apply_power_cut, reschedule
 from src.scheduler.engine import STRATEGIES, export_schedule, generate_schedule, schedule_dataframe
 from src.validation.schedule_validator import validate_schedule
 
@@ -351,6 +351,8 @@ def _make_disruptions(kind: str, values: dict) -> list[Disruption]:
         return [Disruption("UI_ABSENCE", DisruptionType.OPERATOR_ABSENCE, when, values["operator"], values["duration"], f"{values['operator']} absent")]
     if kind == "Material delay":
         return [Disruption("UI_MATERIAL", DisruptionType.MATERIAL_DELAY, values["available"], values["order"], 0, f"Material delayed for {values['order']}")]
+    if kind == "Power cut":
+        return [Disruption("UI_POWER_CUT", DisruptionType.POWER_CUT, when, "SHOP", values["duration"], "Grid power cut shop-wide", generator_available=values["generator_available"])]
     return [Disruption("UI_REWORK", DisruptionType.REWORK_REQUIRED, when, values["order"], 0, f"Rework required for {values['order']}")]
 
 
@@ -376,8 +378,8 @@ def _render_disruptions(labels):
     orders = _read_csv("orders.csv")["order_id"].tolist()
     kind = st.selectbox(
         "Disruption type",
-        ["Machine breakdown", "Operator absence", "Material delay", "Rework", "Combined / cascade"],
-        help="Machine breakdown: equipment stops working. Operator absence: person is unavailable. Material delay: incoming part arrives late. Rework: pieces failed inspection and must be redone. Combined/cascade: grinder and one operator both go down at the same time (hardest case)."
+        ["Machine breakdown", "Operator absence", "Material delay", "Rework", "Power cut", "Combined / cascade"],
+        help="Machine breakdown: equipment stops working. Operator absence: person is unavailable. Material delay: incoming part arrives late. Rework: pieces failed inspection and must be redone. Power cut: choose generator operation or lose the outage window. Combined/cascade: grinder and one operator both go down at the same time."
     )
     # Show help for selected disruption type
     if kind == "Machine breakdown":
@@ -448,6 +450,13 @@ def _render_disruptions(labels):
             value=40,
             step=1,
             help="How many pieces failed and must be redone?"
+        )
+    elif kind == "Power cut":
+        values["generator_available"] = st.radio(
+            "Power cut response",
+            [True, False],
+            format_func=lambda value: "Run diesel generator" if value else "Lose the outage window",
+            help="Generator uses the configured 1.8x effective machine rate. Losing the window delays work and may increase delivery penalties."
         )
     elif kind == "Combined / cascade":
         values["operator"] = st.selectbox(
