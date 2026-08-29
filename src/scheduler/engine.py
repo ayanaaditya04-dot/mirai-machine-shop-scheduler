@@ -300,14 +300,32 @@ def generate_schedule(strategy: str, data_dir: str | Path = "data") -> Schedule:
     return Schedule(strategy, slots, summaries, {key: round(value, 2) for key, value in totals.items()}, unscheduled)
 
 
+
 def schedule_dataframe(schedule: Schedule) -> pd.DataFrame:
-    return pd.DataFrame([{**slot.__dict__, "start_time": slot.start_time.isoformat(), "end_time": slot.end_time.isoformat(), "decision_log": json.dumps(slot.decision_log, sort_keys=True)} for slot in schedule.slots])
+    return pd.DataFrame([
+        {
+            **slot.__dict__,
+            "start_time": slot.start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "end_time": slot.end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "decision_log": json.dumps(slot.decision_log, sort_keys=True),
+        }
+        for slot in schedule.slots
+    ])
 
 
-def export_schedule(schedule: Schedule, output_dir: str | Path = "outputs") -> None:
+def export_schedule(schedule: Schedule, output_dir: str | Path = "outputs") -> Path:
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
     name = schedule.strategy.lower()
-    schedule_dataframe(schedule).to_csv(output / f"schedule_{name}.csv", index=False)
-    pd.DataFrame(schedule.order_summary).to_csv(output / f"order_summary_{name}.csv", index=False)
-    (output / f"cost_summary_{name}.json").write_text(json.dumps(schedule.cost_summary, indent=2) + "\n", encoding="utf-8")
+
+    schedule_dataframe(schedule).to_csv(
+        output / f"schedule_{name}.csv",
+        index=False,
+    )
+
+    pd.DataFrame(schedule.order_summary).to_csv(
+        output / f"order_summary_{name}.csv",
+        index=False,
+    )
+
+    return output
