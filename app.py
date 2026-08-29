@@ -219,8 +219,30 @@ def _render_schedule(labels, schedule):
     if shifts: frame = frame[frame.shift_id.isin(shifts)]
     if orders: frame = frame[frame.order_id.isin(orders)]
     shown = frame[["machine_id", "machine_type", "shift_id", "order_id", "operation_id", "start_time", "end_time", "operator_id", "setup_time_minutes", "status"]]
+    display = shown.copy()
+    for source_col, date_label, time_label in [
+        ("start_time", "Start Date", "Start Time"),
+        ("end_time", "End Date", "End Time"),
+    ]:
+        source = pd.to_datetime(display[source_col], errors="coerce")
+        display[date_label] = source.dt.strftime("%Y-%m-%d")
+        display[time_label] = source.dt.strftime("%H:%M:%S")
+    display = display[[
+        "machine_id",
+        "machine_type",
+        "shift_id",
+        "order_id",
+        "operation_id",
+        "Start Date",
+        "Start Time",
+        "End Date",
+        "End Time",
+        "operator_id",
+        "setup_time_minutes",
+        "status",
+    ]]
     st.dataframe(
-        shown,
+        display,
         column_config={
             "machine_id": st.column_config.TextColumn(
                 "machine_id",
@@ -242,6 +264,22 @@ def _render_schedule(labels, schedule):
                 "operation_id",
                 help="Unique identifier of the operation."
             ),
+            "Start Date": st.column_config.TextColumn(
+                "Start Date",
+                help="Planned start time (the time the system thinks this will begin). This is planned, not actual."
+            ),
+            "Start Time": st.column_config.TextColumn(
+                "Start Time",
+                help="Planned start time (the time the system thinks this will begin). This is planned, not actual."
+            ),
+            "End Date": st.column_config.TextColumn(
+                "End Date",
+                help="Planned end time (the time the system thinks this will finish). This is planned, not actual."
+            ),
+            "End Time": st.column_config.TextColumn(
+                "End Time",
+                help="Planned end time (the time the system thinks this will finish). This is planned, not actual."
+            ),
             "setup_time_minutes": st.column_config.NumberColumn(
                 "setup_time_minutes",
                 help="Changeover time (in minutes) that must happen before this operation can start."
@@ -253,14 +291,6 @@ def _render_schedule(labels, schedule):
             "operator_id": st.column_config.TextColumn(
                 "operator_id",
                 help="Qualified operator assigned to run this operation. This is a label, not editable."
-            ),
-            "start_time": st.column_config.TextColumn(
-                "start_time",
-                help="Planned start time (the time the system thinks this will begin). This is planned, not actual."
-            ),
-            "end_time": st.column_config.TextColumn(
-                "end_time",
-                help="Planned end time (the time the system thinks this will finish). This is planned, not actual."
             )
         },
         hide_index=True,
